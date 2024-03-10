@@ -1,8 +1,8 @@
-from flask import Flask, render_template, session, redirect, url_for, flash
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 
 app = Flask(__name__)
@@ -13,7 +13,11 @@ moment = Moment(app)
 
 
 class NameForm(FlaskForm):
-    name = StringField('What is your name?', validators=[DataRequired()])
+    name = StringField('Informe o seu nome:', validators=[DataRequired()])
+    surname = StringField('Informe o seu sobrenome:', validators=[DataRequired()])
+    instituicao = StringField('Informe a sua instituição de ensino:', validators=[DataRequired()])
+    disciplina = SelectField('Informe a sua disciplina:',choices=[('DSWA5','DSWA5'),('DSBA4','DSBA4'),('Gestão de projetos','Gestão de projetos')])
+
     submit = SubmitField('Submit')
 
 
@@ -29,11 +33,16 @@ def internal_server_error(e):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    ip = request.remote_addr
+    domain = request.url_root
     form = NameForm()
     if form.validate_on_submit():
         old_name = session.get('name')
         if old_name is not None and old_name != form.name.data:
-            flash('Looks like you have changed your name!')
+            flash('Você alterou o seu nome!')
         session['name'] = form.name.data
+        session['surname'] = form.surname.data
+        session['instituicao'] = form.instituicao.data
+        session['disciplina'] = form.disciplina.data
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
+    return render_template('index.html', form=form, name=session.get('name'), instituicao=session.get('instituicao'), disciplina =session.get('disciplina'),  ip=ip,host=domain)

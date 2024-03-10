@@ -4,6 +4,12 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Hello, {{ name }}!</h1>
+    <h1>Olá, {{ name }}!</h1>
+
+    <h2>A sua Instituição de ensino é {{instituicao}}</h2>
+    <h2>Está cursando a disciplina de {{disciplina}}</h2>
+
+    <h3>O IP do computador remoto é: {{ip}}</h3>
+    <h3>O host da aplicação é: {{host}}</h3>
 </div>
 {% endblock %}
